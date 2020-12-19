@@ -119,7 +119,7 @@ exports.getUserDetails = (req, res) => {
             userData.events.push({
                 title: event.data().title,
                 date: event.data().date,
-                title: event.data().title,
+                organizer: req.params.userName,
                 userImage: event.data().userImage,
                 participantCount: event.data().participantCount,
                 reviewCount: event.data().reviewCount,
@@ -145,9 +145,9 @@ exports.getAuthenticatedUser = (req, res) => {
             db.collection('participants').where('userName', '==', req.user.userName)
             .get()
             .then(data => {
-                userData.participants = [];
+                userData.upcomingEvents = [];
                 data.forEach(doc => {
-                    userData.participants.push(doc.data());
+                    userData.upcomingEvents.push(doc.data());
                 })
 
                 return db.collection('notifications').where('recipient', '==', req.user.userName)
@@ -162,7 +162,8 @@ exports.getAuthenticatedUser = (req, res) => {
                                 createdAt: doc.data().createdAt,
                                 eventId: doc.data().eventId,
                                 read: doc.data().read,
-                                notificationId: doc.id
+                                notificationId: doc.id,
+                                type: doc.data().type
                             })
                         })
 
@@ -232,6 +233,15 @@ exports.uploadImage = (req, res) => {
                         batch.update(event, { userImage: imageUrl });
                     })
 
+                    return db.collection('reviews').where('reviewer', '==', req.user.userName).get();
+                })
+                .then(data => {
+                    data.forEach(doc => {
+                        const review = db.doc(`/reviews/${doc.id}`);
+
+                        batch.update(review, { userImage: imageUrl });
+                    })
+    
                     return batch.commit();
                 })
         })

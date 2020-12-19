@@ -1,23 +1,23 @@
 const functions = require('firebase-functions');
 const app = require('express')();
 
-const config = require('./util/config');
+var cors = require('cors');
+app.use(cors());
 
 const { getAllEvents, postOneEvent, getEvent, reviewEvent, attendEvent, unattendEvent, deleteEvent } = require('./handlers/events');
 const { signup, login, uploadImage, addUserDetails, getAuthenticatedUser, getUserDetails, markNotificationsRead } = require('./handlers/users');
 
 const FBAuth = require('./util/fbAuth');
 
-const { db } = require('./util/admin');
 
 // event routes
 app.post('/event', FBAuth, postOneEvent);
 app.get('/events', getAllEvents);
 app.get('/event/:eventId', getEvent);
 app.delete('/event/:eventId', FBAuth, deleteEvent);
-app.get('/event/:eventId/like', FBAuth, attendEvent);
-app.get('/event/:eventId/unlike', FBAuth, unattendEvent);
-app.post('/event/:eventId/comment', FBAuth, reviewEvent);
+app.get('/event/:eventId/attend', FBAuth, attendEvent);
+app.get('/event/:eventId/unattend', FBAuth, unattendEvent);
+app.post('/event/:eventId/review', FBAuth, reviewEvent);
 
 // users routes
 app.post('/signup', signup);
@@ -25,7 +25,7 @@ app.post('/login', login);
 app.post('/user/image', FBAuth, uploadImage);
 app.post('/user', FBAuth, addUserDetails);
 app.get('/user', FBAuth, getAuthenticatedUser);
-app.get('/user/:handle', getUserDetails);
+app.get('/user/:userName', getUserDetails);
 app.post('/notifications', FBAuth, markNotificationsRead);
 
 exports.api = functions.region('europe-west1').https.onRequest(app);

@@ -19,7 +19,7 @@ exports.getAllEvents = (req, res) => {
                 info: document.data().info,
                 specialGuest: document.data().specialGuest,
                 specialGuestInfo: document.data().specialGuestInfo,
-                specialGuestImage: document.data().specialGuestImage
+                location: document.data().location
             }); 
         });
         return res.json(events);
@@ -28,15 +28,33 @@ exports.getAllEvents = (req, res) => {
 };
 
 exports.postOneEvent = (req, res) => {
-    if (req.body.body.trim() === '') {
-        return res.status(400).json({ body: 'Body must not be empty' });
+    console.log(req.body)
+    if (req.body.title.trim() === '') {
+        return res.status(400).json({ title: 'Title must not be empty' });
     }
+
+    if (req.body.info.trim() === '') {
+        return res.status(400).json({ info: 'Info must not be empty' });
+    }
+
+    if (req.body.specialGuest.trim() === '') {
+        return res.status(400).json({ specialGuest: 'Evnt must have a special guest' });
+    }
+
+    if (req.body.specialGuestInfo.trim() === '') {
+        return res.status(400).json({ specialGuestInfo: 'The special guest must be described' });
+    }
+
+    if (req.body.location.trim() === '') {
+        return res.status(400).json({ location: 'Location must not be empty' });
+    }
+
     const newEvent = {
         title: req.body.title,
         info: req.body.info,
         specialGuest: req.body.specialGuest,
         specialGuestInfo: req.body.specialGuestInfo,
-        specialGuestImage: req.body.specialGuestImage,
+        location: req.body.location,
         organizer: req.user.userName,
         date: new Date().toISOString(),
         userImage: req.user.imageUrl,
@@ -88,7 +106,7 @@ exports.getEvent = (req, res) => {
 
 exports.reviewEvent = (req, res) => {
     if (req.body.body.trim() === '') 
-        return res.status(400).json({ comment: "must not be empty" });
+        return res.status(400).json({ review: "must not be empty" });
 
     const newReview = {
         body: req.body.body,
@@ -122,7 +140,8 @@ exports.reviewEvent = (req, res) => {
                 recipient: eventData.organizer,
                 sender: req.user.userName,
                 read: false,
-                eventId: eventData.eventId
+                eventId: eventData.eventId,
+                type: 'review'
             })
         }
     })
@@ -144,6 +163,7 @@ exports.attendEvent = (req, res) => {
     let eventData;
     eventDocument.get()
         .then(doc => {
+            console.log(doc.data())
             if(doc.exists) {
                 eventData = doc.data();
                 eventData.eventId = doc.id;
@@ -166,7 +186,8 @@ exports.attendEvent = (req, res) => {
                             recipient: eventData.organizer,
                             sender: req.user.userName,
                             read: false,
-                            eeventId: eventData.eeventId
+                            type: 'attend',
+                            eventId: eventData.eventId
                         })
                     }
                 })
@@ -192,7 +213,7 @@ exports.unattendEvent = (req, res) => {
         .where('eventId', '==', req.params.eventId)
         .limit(1);
 
-    const eventDocument = db.doc(`screams/${req.params.eventId}`);
+    const eventDocument = db.doc(`events/${req.params.eventId}`);
 
     let eventData;
 
@@ -216,8 +237,17 @@ exports.unattendEvent = (req, res) => {
                         eventData.participantCount--;
                         return eventDocument.update({ participantCount: eventData.participantCount });
                     })
-                    .then(() => {
-                       return db.doc(`/notifications/${data.docs[0].id}`).delete()
+                    .then(doc => {
+                        if(eventData.organizer !== req.user.userName) {
+                            return db.doc(`/notifications/${doc.id}`).set({
+                                createdAt: new Date().toISOString(),
+                                recipient: eventData.organizer,
+                                sender: req.user.userName,
+                                read: false,
+                                type: 'unattend',
+                                eventId: eventData.eventId
+                            })
+                        }
                     })
                     .then(() => {
                         res.json(eventData);

@@ -21,8 +21,8 @@ let db = {
             userImage: 'image/fhrifhrifhirir/ufifo',
             specialGuest: 'image/fhrifhrifhirir/ufifo',
             specialGuestInfo: 'info about special guest',
-            specialGuestImage: 'image/fhrifhrifhirir/ufifo',
-            info: 'info about event'
+            info: 'info about event',
+            location: 'UK'
         }
     ],
     reviews: [
@@ -46,7 +46,8 @@ let db = {
             sender: 'john',
             read: 'true | false',
             eventId: 'eubgruf485u0gfh',
-            createdAt: '2020-12-12T14:35:19.504Z'
+            createdAt: '2020-12-12T14:35:19.504Z',
+            type: 'attend | review'
         }
     ]
 };
