@@ -77,6 +77,7 @@ export const getEvent = (eventId) => dispatch => {
     dispatch({ type: LOADING_UI });
     axios.get(`/event/${eventId}`)
         .then(res => {
+            console.log(res.data)
             dispatch({
                 type: SET_EVENT,
                 payload: res.data
@@ -116,3 +117,12 @@ export const getUserPage = (userName) => dispatch => {
             dispatch({ type: SET_EVENTS, payload: null})
         });
 };
+
+export const uploadImageEvent = (formData, eventId)  => (dispatch) => {
+    dispatch({ type: LOADING_DATA });
+    axios.post(`event/${eventId}/image`, formData)
+        .then(() => {
+            dispatch(getEvents());
+        })
+        .catch(err => console.log(err));
+}

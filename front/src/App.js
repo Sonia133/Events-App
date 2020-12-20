@@ -19,7 +19,7 @@ import user from './pages/user';
 import home from './pages/home';
 import login from './pages/login';
 import signup from './pages/signup';
-//import eventInfo from './pages/eventInfo';
+import eventInfo from './pages/eventInfo';
 
 //components
 import Navbar from './components/layout/Navbar';
@@ -57,7 +57,8 @@ class App extends Component {
                 <AuthRoute exact path="/login" component={login} />
                 <AuthRoute exact path="/signup" component={signup} />
                 <Route exact path="/users/:userName" component={user}/>
-                <Route exact path="/users/:userName/events/:eventId" component={user}/>
+                <Route exact path="/users/:userName/event/:eventId" component={user}/>
+                <Route exact path="/events/:eventId" component={eventInfo}/>
               </Switch>  
             </div> 
           </Router>

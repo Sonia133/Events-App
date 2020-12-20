@@ -31,17 +31,17 @@ class AttendButton extends Component {
 
         const attendButton = !authenticated ? (
             <Link to='/login'>
-                <EditButton tip="attend">
+                <EditButton tip="Attend">
                         <LibraryAddIcon color="primary"></LibraryAddIcon>
                 </EditButton>
             </Link>
         ) : (
             this.attendedEvent() ? (
-                <EditButton tip="unattend" onClick={this.unattendEvent}>
+                <EditButton tip="Unattend" onClick={this.unattendEvent}>
                     <LibraryAddCheckIcon color="primary"></LibraryAddCheckIcon>
                 </EditButton>
             ) : (
-                <EditButton tip="attend" onClick={this.attendEvent}>
+                <EditButton tip="Attend" onClick={this.attendEvent}>
                     <LibraryAddIcon color="primary"></LibraryAddIcon>
                 </EditButton>
             )

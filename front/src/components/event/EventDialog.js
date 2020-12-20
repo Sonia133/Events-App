@@ -11,6 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 
+import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from "@material-ui/icons/Close";
 import UnfoldMore from "@material-ui/icons/UnfoldMore";
 import RateReviewIcon from "@material-ui/icons/RateReview";
@@ -42,6 +43,12 @@ const styles = {
     closeButton: {
       position: "absolute",
       left: "90%"
+    },
+    info: {
+        position: "absolute",
+        left: "85%",
+        bottom: "22%",
+        fontSize: '15px'
     },
     expandButton: {
       position: "absolute",
@@ -96,7 +103,7 @@ class EventDialog extends Component {
               title,
               date,
               organizer,
-              userImage,
+              eventImage,
               eventId,
               participantCount,
               reviewCount,
@@ -112,7 +119,7 @@ class EventDialog extends Component {
         ) : (
             <Grid container className={classes.container}>
                 <Grid item sm={5}>
-                    <img src={userImage} alt="profile" className={classes.profileImage}></img>
+                    <img src={eventImage} alt="profile" className={classes.profileImage}></img>
                 </Grid>
                 <Grid item sm={7}>
                     <Typography
@@ -133,7 +140,7 @@ class EventDialog extends Component {
                     </Typography>
                     <AttendButton eventId={eventId} />
                     <span>{participantCount} Participants</span>
-                    <EditButton tip="reviews">
+                    <EditButton tip="Reviews">
                         <RateReviewIcon color="primary"></RateReviewIcon>    
                     </EditButton> 
                     <span>{reviewCount} Reviews </span>
@@ -144,6 +151,15 @@ class EventDialog extends Component {
         )
         return (
             <Fragment>
+                <Typography 
+                    variant="h5"
+                    color="primary"
+                    component={Link} 
+                    to={`/events/${this.props.eventId}`}
+                    className={classes.info}
+                >
+                    Info
+                </Typography>
                 <EditButton 
                     onClick={this.handleOpen} 
                     tip="Expand event"

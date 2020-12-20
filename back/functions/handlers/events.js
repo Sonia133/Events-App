@@ -1,4 +1,6 @@
-const { db } = require('../util/admin');
+const { db, admin } = require('../util/admin');
+const config = require('../util/config');
+
 
 exports.getAllEvents = (req, res) => {
     db
@@ -9,17 +11,8 @@ exports.getAllEvents = (req, res) => {
         let events = [];
         data.forEach(document => {
             events.push({
-                eventId: document.id,
-                title: document.data().title,
-                organizer: document.data().organizer,
-                date: document.data().date,
-                reviewCount: document.data().reviewCount,
-                participantCount: document.data().participantCount,
-                userImage: document.data().userImage,
-                info: document.data().info,
-                specialGuest: document.data().specialGuest,
-                specialGuestInfo: document.data().specialGuestInfo,
-                location: document.data().location
+                ...document.data(),
+                eventId: document.id
             }); 
         });
         return res.json(events);
@@ -28,7 +21,6 @@ exports.getAllEvents = (req, res) => {
 };
 
 exports.postOneEvent = (req, res) => {
-    console.log(req.body)
     if (req.body.title.trim() === '') {
         return res.status(400).json({ title: 'Title must not be empty' });
     }
@@ -56,8 +48,8 @@ exports.postOneEvent = (req, res) => {
         specialGuestInfo: req.body.specialGuestInfo,
         location: req.body.location,
         organizer: req.user.userName,
+        eventImage: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
         date: new Date().toISOString(),
-        userImage: req.user.imageUrl,
         participantCount: 0,
         reviewCount: 0
     };
@@ -96,6 +88,16 @@ exports.getEvent = (req, res) => {
         docs.forEach((doc) => {
             eventData.reviews.push(doc.data());
         });
+
+        return db.collection('participants').where('eventId', '==', req.params.eventId)
+        .get();
+    })
+    .then((docs) => {
+        eventData.participants = [];
+        docs.forEach((doc) => {
+            eventData.participants.push(doc.data());
+        });
+
         return res.json(eventData);
     })
     .catch(err => {
@@ -311,3 +313,60 @@ exports.deleteEvent = (req, res) => {
             res.status(500).json({ error: err.code })
         })
 }
+
+exports.uploadImageEvent = (req, res) => {
+    console.log('event')
+    const BusBoy = require('busboy');
+    const path = require('path');
+    const os = require('os');
+    const fs = require('fs');
+
+    const busboy = new BusBoy({ headers: req.headers });
+
+    let imageFileName;
+    let imageTeBeUploaded = {};
+
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        
+        if (mimetype !== 'image/type' && mimetype !== 'image/png') {
+            return res.status(400).json({ error: 'Wrong file type submitted. '});
+        }
+        
+        const imageExtension = filename.split('.')[filename.split('.').length - 1];
+        imageFileName = `${Math.round(Math.random() * 100000000)}.${imageExtension}`;
+
+        const filepath = path.join(os.tmpdir(), imageFileName);
+        imageTeBeUploaded = {
+            filepath,
+            mimetype
+        };
+
+        file.pipe(fs.createWriteStream(filepath));
+    })
+
+    let imageUrl;
+
+    busboy.on('finish', () => {
+        admin.storage().bucket().upload(imageTeBeUploaded.filepath, {
+            resumable: false,
+            metadata: {
+                metadata: {
+                    contentType: imageTeBeUploaded.mimetype
+                }
+            }
+        })
+        .then(() => {
+            const eventImage = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFileName}?alt=media`;
+            
+            return db.doc(`/events/${req.params.eventId}`).update({ eventImage });
+        })
+        .then(() => {
+            return res.json({ message: 'Image uploaded successfully!' });
+        })
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({ error: err.code });
+        })
+    });
+    busboy.end(req.rawBody);
+}; 

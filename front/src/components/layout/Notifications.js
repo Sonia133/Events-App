@@ -23,6 +23,7 @@ class Notifications extends Component {
         anchorEl: null
     }
     handleOpen = (event) => {
+        console.log(event.target)
         this.setState({ anchorEl: event.target });
     }
     handleClose = () => {
@@ -85,8 +86,10 @@ class Notifications extends Component {
                     )
 
                     return (
-                        <MenuItem key={not.createdAt}
-                        onClick = {this.handleClose} >
+                        <MenuItem 
+                            key={not.createdAt}
+                            onClick = {this.handleClose} 
+                        >
                             {icon}
                             <Typography
                                 component={Link}
@@ -106,7 +109,7 @@ class Notifications extends Component {
             )
         return (
             <Fragment>
-                <Tooltip placement="top" title="notifications">
+                <Tooltip placement="top" title="Notifications">
                     <IconButton aria-owns={anchorEl ? 'simple-menu' : undefined}
                         aria-haspopup="true"
                         onClick={this.handleOpen}

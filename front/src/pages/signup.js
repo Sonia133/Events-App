@@ -11,7 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import AppIcon from '../images/icon.png';
+import AppIcon from '../images/event.png';
 
 import { connect } from 'react-redux';
 import { signupUser } from '../redux/actions/userActions';
@@ -149,7 +149,7 @@ class signup extends Component {
                             className={classes.button}
                             disabled={loading}
                         >
-                            Signup
+                            Sign up
                             {loading && (
                                 <CircularProgress size={30} className={classes.progress} />
                             )}

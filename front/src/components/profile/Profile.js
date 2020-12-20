@@ -14,7 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import LocationOn from '@material-ui/icons/LocationOn';
 import CalendarToday from '@material-ui/icons/CalendarToday';
-import EditIcon from '@material-ui/icons/Edit';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import KeyboardReturn from '@material-ui/icons/KeyboardReturn';
 
 import { logoutUser, uploadImage } from '../../redux/actions/userActions';
@@ -108,7 +108,7 @@ class Profile extends Component {
                             onClick={this.handleEditPicture}
                             btnClassName="button"
                         >
-                           <EditIcon color="primary"></EditIcon>
+                           <PhotoCameraIcon color="primary"></PhotoCameraIcon>
                         </EditButton>
 
                     </div>
@@ -129,7 +129,7 @@ class Profile extends Component {
                         <CalendarToday color="primary"/> {' '}
                         <span>Joined {dayjs(createdAt).format('MMM YYYY')}</span>
                     </div>
-                    <Tooltip title="logout" placement="top">
+                    <Tooltip title="Logout" placement="top">
                         <IconButton onClick={this.handleLogout}>
                             <KeyboardReturn color="primary"></KeyboardReturn>
                         </IconButton>

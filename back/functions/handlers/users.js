@@ -179,6 +179,7 @@ exports.getAuthenticatedUser = (req, res) => {
 }
 
 exports.uploadImage = (req, res) => {
+    console.log('no')
     const BusBoy = require('busboy');
     const path = require('path');
     const os = require('os');

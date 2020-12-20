@@ -41,7 +41,7 @@ class DeleteEvent extends Component {
         return (
             <Fragment>
                 <EditButton 
-                    tip="delete event" 
+                    tip="Delete event" 
                     onClick={this.handleOpen}
                     btnClassName={classes.deleteButton}
                 >
@@ -60,7 +60,7 @@ class DeleteEvent extends Component {
                         <Button onClick={this.handleClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.deleteEvent} color="secondary">
+                        <Button onClick={this.deleteEvent} color="primary">
                             Delete
                         </Button>
                     </DialogActions>

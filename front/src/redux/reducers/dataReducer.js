@@ -46,7 +46,8 @@ export default function(state = initialState, action) {
         case SET_EVENT:
             return {
                 ...state,
-                event: action.payload
+                event: action.payload,
+                loading: false
             };
         case SUBMIT_REVIEW:
             return {

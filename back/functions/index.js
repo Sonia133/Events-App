@@ -4,7 +4,7 @@ const app = require('express')();
 var cors = require('cors');
 app.use(cors());
 
-const { getAllEvents, postOneEvent, getEvent, reviewEvent, attendEvent, unattendEvent, deleteEvent } = require('./handlers/events');
+const { uploadImageEvent, getAllEvents, postOneEvent, getEvent, reviewEvent, attendEvent, unattendEvent, deleteEvent } = require('./handlers/events');
 const { signup, login, uploadImage, addUserDetails, getAuthenticatedUser, getUserDetails, markNotificationsRead } = require('./handlers/users');
 
 const FBAuth = require('./util/fbAuth');
@@ -18,6 +18,7 @@ app.delete('/event/:eventId', FBAuth, deleteEvent);
 app.get('/event/:eventId/attend', FBAuth, attendEvent);
 app.get('/event/:eventId/unattend', FBAuth, unattendEvent);
 app.post('/event/:eventId/review', FBAuth, reviewEvent);
+app.post('/event/:eventId/image', FBAuth, uploadImageEvent);
 
 // users routes
 app.post('/signup', signup);

@@ -3,6 +3,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import config from '../../util/firebaseConfig';
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -53,8 +55,9 @@ class PostEvent extends Component {
     }
     handleChange = event => {
         this.setState({ [event.target.name]: event.target.value });
-      };
+    };
     handleSubmit = event => {
+        console.log(this.state)
         event.preventDefault();
         this.props.postEvent({ 
             title: this.state.title,
@@ -85,7 +88,7 @@ class PostEvent extends Component {
         const { errors } = this.state;
         return (
             <Fragment>
-                <EditButton onClick={this.handleOpen} tip="post an event">
+                <EditButton onClick={this.handleOpen} tip="Post an event">
                     <AddIcon></AddIcon>
                 </EditButton>
                 <Dialog 
