@@ -1,4 +1,4 @@
-import { SUBMIT_REVIEW, SET_EVENTS, ATTEND_EVENT, UNATTEND_EVENT, LOADING_DATA, DELETE_EVENT, POST_EVENT, SET_EVENT } from '../types';
+import { UPDATE_EVENT, SUBMIT_REVIEW, SET_EVENTS, ATTEND_EVENT, UNATTEND_EVENT, LOADING_DATA, DELETE_EVENT, POST_EVENT, SET_EVENT } from '../types';
 
 const initialState = {
     events: [],
@@ -50,12 +50,24 @@ export default function(state = initialState, action) {
                 loading: false
             };
         case SUBMIT_REVIEW:
+            var index = state.events.findIndex((event) => event.eventId === action.payload.eventId);
+            state.events[index].reviewCount += 1;
+
             return {
                 ...state,
                 event: {
                     ...state.event,
-                    reviews: [action.payload, ...state.event.reviews]
+                    reviews: [action.payload, ...state.event.reviews],
+                    reviewCount: state.event.reviewCount + 1
                 }
+            };
+        case UPDATE_EVENT: 
+            var index = state.events.findIndex((event) => event.eventId === action.payload.eventId);
+
+            state.events[index].eventImage = action.payload.eventImage;
+            return {
+                ...state,
+                loading: false
             };
         default: 
             return state;

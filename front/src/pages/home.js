@@ -4,34 +4,34 @@ import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 
 import Event from '../components/event/Event';
-import Profile from '../components/profile/Profile';
-import EventSkeleton from '../util/EventSkeleton';
 
 import { connect } from 'react-redux';
 
 import { getEvents } from'../redux/actions/dataActions';
+import { withStyles } from '@material-ui/core';
+
+const styles = {
+
+};
 
 class home extends Component {
     componentDidMount() {
         this.props.getEvents();
     }
     render() {
-        const { events, loading } = this.props.data;
+        const { classes, data: { events, loading} } = this.props;
 
         let recentEventsMarkup = !loading ? (
           events.map(event => 
-          <Event key={event.eventId} event={event} />)
+            <Grid item xs={3} key={event.eventId}>
+              <Event event={event} />
+            </Grid>)
         ) : (
-            <EventSkeleton />
+            <p>Loading events..</p>
         );
         return (
-          <Grid container spacing={10}>
-              <Grid item sm={4} xs={12}>
-                <Profile />
-              </Grid>
-              <Grid item sm={8} xs={12}>
-                  {recentEventsMarkup}
-              </Grid>
+          <Grid container spacing={10} style={{ padding: '50px 70px' }}>
+              {recentEventsMarkup}
           </Grid> 
         )
     }
@@ -39,11 +39,12 @@ class home extends Component {
 
 home.propTypes = {
     getEvents: PropTypes.func.isRequired,
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
   };
 
 const mapStateToProps = state => ({
     data: state.data 
 })
 
-export default connect(mapStateToProps, { getEvents })(home);
+export default connect(mapStateToProps, { getEvents })(withStyles(styles)(home));

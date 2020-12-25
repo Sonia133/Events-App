@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -18,10 +19,19 @@ import { loginUser } from '../redux/actions/userActions';
 
 const styles = {
     form: {
-        textAlign: 'center'
+        marginTop: '50px',
+        width: '40%'
+    },
+    page: {
+        textAlign: 'center',
+        height: '80vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
     },
     image: {
-        margin: '20px auto 20px auto'
+        width: '40px',
+        height: '40px'
     },
     pageTitle: {
         margin: '10px auto 10px auto'
@@ -32,7 +42,8 @@ const styles = {
     button: {
         marginTop: '10px',
         marginBottom: '5px',
-        position: 'relative'
+        position: 'relative',
+        width: '30%'
     },
     customError: {
         color: 'red',
@@ -41,6 +52,12 @@ const styles = {
     },
     progress: {
         position: 'absolute'
+    },
+    fields: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        alignItems: 'center'
     }
 }
 
@@ -65,8 +82,6 @@ class login extends Component {
             email: this.state.email,
             password: this.state.password
         };
-        console.log(userData)
-        console.log(window.location.pathname)
 
         this.props.loginUser(userData, this.props.history);
     }
@@ -80,14 +95,23 @@ class login extends Component {
         const { errors } = this.state;
 
         return (
-            <Grid container className={classes.form}>
-                <Grid item sm />
-                <Grid item sm>
-                    <img src={AppIcon} alt="party" className={classes.image} />
+            <Grid container className={classes.page}>
+                <Grid item style={{ width: '30%' }}>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="h3" style={{ paddingRight: '10px'}} >Events</Typography>
+                        <img src={AppIcon} alt="party" className={classes.image} />
+                    </Box>
+                    <Typography>Welcome to our new app!
+                        Here you can see and attend all
+                        kind of events.
+                        Moreover, you can share your own events!
+                    </Typography>
+                </Grid>
+                <Grid item className={classes.form}>
                     <Typography variant="h3" className={classes.pageTitle}>
                         Log in
                     </Typography>
-                    <form noValidate onSubmit={this.handleSubmit}>
+                    <form noValidate onSubmit={this.handleSubmit} className={classes.fields}>
                         <TextField 
                             id="email" 
                             name="email" 
@@ -129,11 +153,9 @@ class login extends Component {
                                 <CircularProgress size={30} className={classes.progress} />
                             )}
                         </Button>
-                        <br />
                         <small>Don't have an account? Sign up  <Link to ="/signup"> here! </Link></small>
                     </form>
                 </Grid>
-                <Grid item sm />
             </Grid>
         )
     }

@@ -6,21 +6,15 @@ import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
-import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
-
-import InfoIcon from '@material-ui/icons/Info';
-import CloseIcon from "@material-ui/icons/Close";
-import UnfoldMore from "@material-ui/icons/UnfoldMore";
 import RateReviewIcon from "@material-ui/icons/RateReview";
 
 import Reviews from './Reviews';
 import ReviewForm from './ReviewForm';
 import AttendButton from './AttendButton';
 import EditButton from "../../util/EditButton";
-import { getEvent, clearErrors } from '../../redux/actions/dataActions';
 
 const styles = {
     invisibleSeparator: {
@@ -31,28 +25,13 @@ const styles = {
       width: "100%",
       borderBottom: "1px solid rgba(0,0,0,0.1)"
     },
-    profileImage: {
+    eventImage: {
       maxWidth: 200,
       height: 200,
-      objectFit: "cover",
-      borderRadius: "50%"
+      objectFit: "cover"
     },
     dialogContent: {
       paddding: 20
-    },
-    closeButton: {
-      position: "absolute",
-      left: "90%"
-    },
-    info: {
-        position: "absolute",
-        left: "85%",
-        bottom: "22%",
-        fontSize: '15px'
-    },
-    expandButton: {
-      position: "absolute",
-      left: "90%"
     },
     spinnerDiv: {
       textAlign: "center",
@@ -65,37 +44,6 @@ const styles = {
 };
 
 class EventDialog extends Component {
-    state = {
-        open: false,
-        oldPath: '',
-        newPath: ''
-    }
-    componentDidMount() {
-        if (this.props.openDialog) {
-            this.handleOpen();
-        }
-    }
-    handleOpen = () => {
-        let oldPath = window.location.pathname;
-        console.log(oldPath)
-        const { organizer, eventId } = this.props;
-        const newPath = `/users/${organizer}/event/${eventId}`;
-
-        if (oldPath === newPath) {
-            oldPath = `/users/${organizer}`;
-        }
-
-        window.history.pushState(null, null, newPath);
-
-        this.setState({ open: true, oldPath, newPath });
-        this.props.getEvent(this.props.eventId);
-    }
-    handleClose = () => {
-        window.history.pushState(null, null, this.state.oldPath);
-
-        this.setState({ open: false })
-        this.props.clearErrors();
-    }
     render() {
         const {
             classes,
@@ -119,13 +67,22 @@ class EventDialog extends Component {
         ) : (
             <Grid container className={classes.container}>
                 <Grid item sm={5}>
-                    <img src={eventImage} alt="profile" className={classes.profileImage}></img>
+                    <img src={eventImage} alt="profile" className={classes.eventImage}></img>
                 </Grid>
                 <Grid item sm={7}>
                     <Typography
                         component={Link}
                         color="primary"
                         variant="h5"
+                        to={`/events/${eventId}`}
+                    >
+                        {title}
+                    </Typography>
+                    <hr className={classes.invisibleSeparator} />
+                    <Typography 
+                        component={Link}
+                        color="primary"
+                        variant="subtitle1"
                         to={`/users/${organizer}`}
                     >
                         @{organizer}
@@ -133,10 +90,6 @@ class EventDialog extends Component {
                     <hr className={classes.invisibleSeparator} />
                     <Typography variant="body2" color="textSecondary">
                         {dayjs(date).format('h:mm a, MMMM DD YYYY')}
-                    </Typography>
-                    <hr className={classes.invisibleSeparator} />
-                    <Typography variant="body1">
-                        {title}
                     </Typography>
                     <AttendButton eventId={eventId} />
                     <span>{participantCount} Participants</span>
@@ -150,44 +103,14 @@ class EventDialog extends Component {
             </Grid>
         )
         return (
-            <Fragment>
-                <Typography 
-                    variant="h5"
-                    color="primary"
-                    component={Link} 
-                    to={`/events/${this.props.eventId}`}
-                    className={classes.info}
-                >
-                    Info
-                </Typography>
-                <EditButton 
-                    onClick={this.handleOpen} 
-                    tip="Expand event"
-                    tipClassName={classes.expandButton}
-                >
-                    <UnfoldMore color="primary" />
-                </EditButton>
-                <Dialog 
-                    open={this.state.open} 
-                    onClose={this.handleClose}
-                    fullWidth
-                    maxWidth="sm"
-                >
-                    <EditButton tip="close" onClick={this.handleClose} tipClassName={classes.closeButton}>
-                        <CloseIcon />
-                    </EditButton>
-                    <DialogContent className={classes.dialogContent}>
-                        {dialogMarkup}
-                    </DialogContent>
-                </Dialog>
-            </Fragment>
+            <DialogContent className={classes.dialogContent}>
+                {dialogMarkup}
+            </DialogContent>
         )
     }
 }
 
 EventDialog.propTypes = {
-    getEvent: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
     ui: PropTypes.object.isRequired,
     event: PropTypes.object.isRequired,
     eventId: PropTypes.string.isRequired,
@@ -200,9 +123,4 @@ const mapStateToProps = state => ({
     ui: state.ui
 });
 
-const mapActionsToProps = {
-    getEvent,
-    clearErrors
-};
-
-export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(EventDialog));
+export default connect(mapStateToProps, null)(withStyles(styles)(EventDialog));

@@ -30,7 +30,7 @@ exports.postOneEvent = (req, res) => {
     }
 
     if (req.body.specialGuest.trim() === '') {
-        return res.status(400).json({ specialGuest: 'Evnt must have a special guest' });
+        return res.status(400).json({ specialGuest: 'Event must have a special guest' });
     }
 
     if (req.body.specialGuestInfo.trim() === '') {
@@ -41,6 +41,12 @@ exports.postOneEvent = (req, res) => {
         return res.status(400).json({ location: 'Location must not be empty' });
     }
 
+    if (req.body.date.trim() === '') {
+        return res.status(400).json({ date: 'Date must not be empty' });
+    }
+
+    const noImg = 'no-img.png';
+
     const newEvent = {
         title: req.body.title,
         info: req.body.info,
@@ -49,7 +55,7 @@ exports.postOneEvent = (req, res) => {
         location: req.body.location,
         organizer: req.user.userName,
         eventImage: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${noImg}?alt=media`,
-        date: new Date().toISOString(),
+        date: req.body.date,
         participantCount: 0,
         reviewCount: 0
     };
@@ -110,6 +116,8 @@ exports.reviewEvent = (req, res) => {
     if (req.body.body.trim() === '') 
         return res.status(400).json({ review: "must not be empty" });
 
+    const eventDocument = db.doc(`events/${req.params.eventId}`);
+
     const newReview = {
         body: req.body.body,
         createdAt: new Date().toISOString(),
@@ -130,7 +138,7 @@ exports.reviewEvent = (req, res) => {
         eventData = doc.data();
         eventData.eventId = doc.id;
         
-        return doc.ref.update({ reviewCount: doc.data().reviewCount + 1});
+        return eventDocument.update({ reviewCount: eventData.reviewCount + 1 });
     })
     .then(() => {
         return db.collection('reviews').add(newReview);
@@ -179,7 +187,9 @@ exports.attendEvent = (req, res) => {
             if (data.empty) {
                 db.collection('participants').add({
                     userName: req.user.userName,
-                    eventId: eventData.eventId
+                    eventId: eventData.eventId,
+                    title: eventData.title,
+                    date: eventData.date
                 })
                 .then(doc => {
                     if(eventData.organizer !== req.user.userName) {
@@ -198,8 +208,26 @@ exports.attendEvent = (req, res) => {
                     return eventDocument.update({ participantCount: eventData.participantCount });
                 })
                 .then(() => {
+                    return db.collection('reviews').where('eventId', '==', req.params.eventId)
+                    .get();
+                })
+                .then((docs) => {
+                    eventData.reviews = [];
+                    docs.forEach((doc) => {
+                        eventData.reviews.push(doc.data());
+                    });
+            
+                    return db.collection('participants').where('eventId', '==', req.params.eventId)
+                    .get();
+                })
+                .then((docs) => {
+                    eventData.participants = [];
+                    docs.forEach((doc) => {
+                        eventData.participants.push(doc.data());
+                    });
+            
                     return res.json(eventData);
-                });
+                })
             } else {
                 return res.status(400).json({ error: 'Event already attended.'});
             }
@@ -252,7 +280,25 @@ exports.unattendEvent = (req, res) => {
                         }
                     })
                     .then(() => {
-                        res.json(eventData);
+                        return db.collection('reviews').where('eventId', '==', req.params.eventId)
+                        .get();
+                    })
+                    .then((docs) => {
+                        eventData.reviews = [];
+                        docs.forEach((doc) => {
+                            eventData.reviews.push(doc.data());
+                        });
+                
+                        return db.collection('participants').where('eventId', '==', req.params.eventId)
+                        .get();
+                    })
+                    .then((docs) => {
+                        eventData.participants = [];
+                        docs.forEach((doc) => {
+                            eventData.participants.push(doc.data());
+                        });
+                
+                        return res.json(eventData);
                     })
             }
         })

@@ -4,6 +4,11 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   background-color: rgb(245,245,245);
+  background-image: url("./images/backImage.jpg");
+}
+
+body {
+  overflow-x: hidden;
 }
 
 .container {

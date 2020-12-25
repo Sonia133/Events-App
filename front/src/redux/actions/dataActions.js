@@ -1,4 +1,4 @@
-import { SUBMIT_REVIEW, STOP_LOADING_UI, POST_EVENT, DELETE_EVENT, SET_EVENTS, LOADING_DATA, ATTEND_EVENT, UNATTEND_EVENT, LOADING_UI, SET_ERRORS, CLEAR_ERRORS, SET_EVENT } from '../types';
+import { UPDATE_EVENT, SUBMIT_REVIEW, STOP_LOADING_UI, POST_EVENT, DELETE_EVENT, SET_EVENTS, LOADING_DATA, ATTEND_EVENT, UNATTEND_EVENT, LOADING_UI, SET_ERRORS, CLEAR_ERRORS, SET_EVENT } from '../types';
 import axios from '../axios';
 
 export const getEvents = () => (dispatch) => {
@@ -122,7 +122,20 @@ export const uploadImageEvent = (formData, eventId)  => (dispatch) => {
     dispatch({ type: LOADING_DATA });
     axios.post(`event/${eventId}/image`, formData)
         .then(() => {
-            dispatch(getEvents());
+            dispatch({ type: LOADING_DATA });
+            axios.get(`/event/${eventId}`)
+                .then((res) => {
+                    dispatch({
+                        type: UPDATE_EVENT,
+                        payload: res.data
+                    })
+                })
+                .catch((err) => {
+                    dispatch({
+                        type: UPDATE_EVENT,
+                        payload: []
+                    })
+                });
         })
         .catch(err => console.log(err));
 }

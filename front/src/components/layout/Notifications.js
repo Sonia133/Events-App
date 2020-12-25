@@ -35,6 +35,11 @@ class Notifications extends Component {
         
             this.props.markNotificationsRead(unreadNotificationsIds);
     }
+    route = (loc, not) => {
+        return loc === `/users/${not.recipient}` ? 
+            `/users/${not.recipient}/event/${not.eventId}` : 
+            `/events/${not.eventId}`;
+    }
     render() {
         dayjs.extend(relativeTime);
 
@@ -49,13 +54,13 @@ class Notifications extends Component {
                         badgeContent={notifications.filter(not => not.read === false).length}
                         color="secondary"
                     >
-                        <NotificationsIcon />
+                        <NotificationsIcon style={{ color: '#fff' }}/>
                     </Badge>
                 ) : (
-                    notificationIcon = <NotificationsIcon />
+                    notificationIcon = <NotificationsIcon style={{ color: '#fff' }}/>
                 )
         } else {
-            notificationIcon = <NotificationsIcon />
+            notificationIcon = <NotificationsIcon style={{ color: '#fff' }}/>
         }
 
         let notificationsMarkup = 
@@ -89,13 +94,13 @@ class Notifications extends Component {
                         <MenuItem 
                             key={not.createdAt}
                             onClick = {this.handleClose} 
+                            component={Link}
+                            to={`/events/${not.eventId}`}
                         >
                             {icon}
                             <Typography
-                                component={Link}
                                 color="default"
                                 variant="body1"
-                                to={`users/${not.recipient}/event/${not.eventId}`}
                             >
                                 {not.sender} {verb} your event {time}
                             </Typography>

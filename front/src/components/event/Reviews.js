@@ -20,8 +20,7 @@ const styles = {
     reviewImage: {
         maxWidth: '100%',
         height: 100,
-        objectFit: 'cover',
-        borderRadius: '50%'
+        objectFit: 'cover'
     },
     reviewData: {
         marginLeft: 20

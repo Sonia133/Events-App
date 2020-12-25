@@ -120,7 +120,7 @@ exports.getUserDetails = (req, res) => {
                 title: event.data().title,
                 date: event.data().date,
                 organizer: req.params.userName,
-                userImage: event.data().userImage,
+                eventImage: event.data().eventImage,
                 participantCount: event.data().participantCount,
                 reviewCount: event.data().reviewCount,
                 eventId: event.id

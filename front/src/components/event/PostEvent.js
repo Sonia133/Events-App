@@ -18,6 +18,15 @@ import CloseIcon from "@material-ui/icons/Close";
 import EditButton from '../../util/EditButton';
 import { postEvent, clearErrors } from '../../redux/actions/dataActions';
 
+
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+
+
 const styles = {
     textField: {
       marginBottom: "10px"
@@ -44,6 +53,7 @@ class PostEvent extends Component {
         specialGuest: "",
         specialGuestInfo: "",
         location: "",
+        date: new Date(),
         errors: {}
     };
     handleOpen = () => {
@@ -57,15 +67,20 @@ class PostEvent extends Component {
         this.setState({ [event.target.name]: event.target.value });
     };
     handleSubmit = event => {
-        console.log(this.state)
         event.preventDefault();
+        console.log('not here')
         this.props.postEvent({ 
             title: this.state.title,
             info: this.state.info,
             specialGuest: this.state.specialGuest,
             specialGuestInfo: this.state.specialGuestInfo,
-            location: this.state.location 
+            location: this.state.location,
+            date: this.state.date
         });
+    };
+    handleDateChange = date => {
+        console.log('here')
+        this.setState({ date });
     };
     componentWillReceiveProps(nextProps) {
         if (nextProps.ui.errors) {
@@ -78,6 +93,7 @@ class PostEvent extends Component {
                 specialGuest: "",
                 specialGuestInfo: "",
                 location: "",
+                date: "",
                 open: false, 
                 errors: {} 
             });
@@ -85,11 +101,12 @@ class PostEvent extends Component {
     }
     render() {
         const { classes, ui: { loading } } = this.props;
-        const { errors } = this.state;
+        const { errors, date } = this.state;
+        
         return (
             <Fragment>
                 <EditButton onClick={this.handleOpen} tip="Post an event">
-                    <AddIcon></AddIcon>
+                    <AddIcon style={{ color: '#fff' }}></AddIcon>
                 </EditButton>
                 <Dialog 
                     open={this.state.open} 
@@ -116,6 +133,19 @@ class PostEvent extends Component {
                                 onChange={this.handleChange}
                                 fullWidth
                             ></TextField>
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                                margin="normal"
+                                id="date-picker-dialog"
+                                label="Date picker dialog"
+                                format="MM/dd/yyyy"
+                                value={date}
+                                onChange={this.handleDateChange}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                            </MuiPickersUtilsProvider>
                             <TextField 
                                 name="info" 
                                 type="text" 

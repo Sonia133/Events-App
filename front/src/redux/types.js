@@ -20,3 +20,4 @@ export const UNATTEND_EVENT = 'UNATTEND_EVENT';
 export const DELETE_EVENT = 'DELETE_EVENT';
 export const POST_EVENT = 'POST_EVENT';
 export const SUBMIT_REVIEW = 'SUBMIT_REVIEW';
+export const UPDATE_EVENT = 'UPDATE_EVENT';

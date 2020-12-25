@@ -20,12 +20,14 @@ import home from './pages/home';
 import login from './pages/login';
 import signup from './pages/signup';
 import eventInfo from './pages/eventInfo';
+import Profile from './components/profile/Profile';
 
 //components
 import Navbar from './components/layout/Navbar';
 import AuthRoute from './util/AuthRoute';
 
 import themeFile from './util/theme';
+import BackImage from './images/backImage.jpg';
 
 const theme = createMuiTheme(themeFile);
 
@@ -50,14 +52,15 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>
         <Provider store={store}>
           <Router>
-            <Navbar/>
+            <Navbar />
             <div className="container">
               <Switch>
                 <Route exact path="/" component={home}/>
                 <AuthRoute exact path="/login" component={login} />
                 <AuthRoute exact path="/signup" component={signup} />
+                <Route exact path="/profile/:userName" component={Profile} />
                 <Route exact path="/users/:userName" component={user}/>
-                <Route exact path="/users/:userName/event/:eventId" component={user}/>
+                <Route exact path="/users/:userName/events/:eventId" component={user}/>
                 <Route exact path="/events/:eventId" component={eventInfo}/>
               </Switch>  
             </div> 

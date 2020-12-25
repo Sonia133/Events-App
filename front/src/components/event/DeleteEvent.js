@@ -1,26 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import EditButton from '../../util/EditButton';
 import { deleteEvent } from '../../redux/actions/dataActions';
 
-const styles = {
-    deleteButton: {
-        left: '90%',
-        position: 'absolute',
-        top: '10%'
-    }
-}
+const style = {};
 
 class DeleteEvent extends Component {
     state = {
@@ -38,14 +32,14 @@ class DeleteEvent extends Component {
     }
     render() {
         const { classes } = this.props;
+        
         return (
             <Fragment>
                 <EditButton 
                     tip="Delete event" 
                     onClick={this.handleOpen}
-                    btnClassName={classes.deleteButton}
                 >
-                    <DeleteOutline color="secondary"></DeleteOutline>
+                    <HighlightOffIcon color="primary"></HighlightOffIcon>
                 </EditButton>
                 <Dialog 
                     open={this.state.open}
@@ -60,7 +54,7 @@ class DeleteEvent extends Component {
                         <Button onClick={this.handleClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this.deleteEvent} color="primary">
+                        <Button onClick={this.deleteEvent} color="secondary">
                             Delete
                         </Button>
                     </DialogActions>
@@ -76,4 +70,4 @@ DeleteEvent.propTypes = {
   eventId: PropTypes.string.isRequired
 };
 
-export default connect(null, { deleteEvent })(withStyles(styles)(DeleteEvent));
+export default connect(null, { deleteEvent })(withStyles(style)(DeleteEvent));

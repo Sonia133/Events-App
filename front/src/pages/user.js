@@ -6,21 +6,15 @@ import { connect } from 'react-redux';
 import Event from '../components/event/Event';
 import StaticProfile from '../components/profile/StaticProfile';
 import { getUserPage } from '../redux/actions/dataActions';
-import EventSkeleton from '../util/EventSkeleton';
-import ProfileSkeleton from '../util/ProfileSkeleton';
 
 import Grid from '@material-ui/core/Grid';
 
 class user extends Component {
     state = {
-        profile: null,
-        eventIdParam: null
+        profile: null
     };
     componentDidMount() {
         const userName = this.props.match.params.userName;
-        const eventId = this.props.match.params.eventId;
-    
-        if (eventId) this.setState({ eventIdParam: eventId });
         
         this.props.getUserPage(userName);
         axios
@@ -33,32 +27,32 @@ class user extends Component {
     }
     render() {
         const { events, loading } = this.props.data;
-        const { eventIdParam } = this.state;
 
         const eventsMarkup = loading ? (
-            <EventSkeleton />
+            <p>Loading events...</p>
         ) : events === null ? (
             <p>No events found for this user</p>
-        ) : !eventIdParam ? (
-            events.map(event => <Event key={event.eventId} event={event} />)
         ) : (
-            events.map(event => {
-              if (event.eventId !== eventIdParam)
-                return <Event key={event.eventId} event={event} />;
-              else return <Event key={event.eventId} event={event} openDialog />;
-            })
+            events.map(event => 
+                <Grid item xs={3}>
+                    <Event key={event.eventId} event={event} />
+                </Grid>
+            )
         );
+
         return (
             <Grid container spacing={10}>
               <Grid item sm={4} xs={12}>
-                {this.state.profile === null ? (
-                    <ProfileSkeleton />
+              {this.state.profile === null ? (
+                    <p>Loading profile...</p>
                 ) : (
                     <StaticProfile profile={this.state.profile} />
-                )}
+              )}
               </Grid>
               <Grid item sm={8} xs={12}>
-                  {eventsMarkup}
+                  <Grid container spacing={2}>
+                    {eventsMarkup}
+                  </Grid>
               </Grid>
           </Grid> 
         )
