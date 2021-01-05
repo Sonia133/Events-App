@@ -87,9 +87,10 @@ class Event extends Component {
     }
     handleImageChange = (event) => {
         const image = event.target.files[0];
+        console.log(image)
         // send to server
         const formData = new FormData();
-        formData.append('image', image, image.name);
+        formData.append('image', image);
 
         this.props.uploadImageEvent(formData, this.props.event.eventId);
     };

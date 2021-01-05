@@ -30,10 +30,9 @@ export default function(state = initialState, action) {
                 ...state
             };
         case DELETE_EVENT: 
-            var index = state.events.findIndex((event) => event.eventId === action.payload);
-            state.events.splice(index, 1);
             return {
-                ...state
+                ...state,
+                events: state.events.filter((event) => event.eventId !== action.payload)
             };
         case POST_EVENT:
             return {
@@ -62,11 +61,9 @@ export default function(state = initialState, action) {
                 }
             };
         case UPDATE_EVENT: 
-            var index = state.events.findIndex((event) => event.eventId === action.payload.eventId);
-
-            state.events[index].eventImage = action.payload.eventImage;
             return {
                 ...state,
+                events: [...state.events.filter(event =>  event.eventId !== action.payload.eventId), action.payload],
                 loading: false
             };
         default: 

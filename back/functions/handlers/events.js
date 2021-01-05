@@ -361,7 +361,6 @@ exports.deleteEvent = (req, res) => {
 }
 
 exports.uploadImageEvent = (req, res) => {
-    console.log('event')
     const BusBoy = require('busboy');
     const path = require('path');
     const os = require('os');
@@ -373,8 +372,8 @@ exports.uploadImageEvent = (req, res) => {
     let imageTeBeUploaded = {};
 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        
-        if (mimetype !== 'image/type' && mimetype !== 'image/png') {
+        console.log(mimetype)
+        if (mimetype !== 'image/type' && mimetype !== 'image/png' && mimetype !=='image/jpg'&& mimetype !=='image/jpeg') {
             return res.status(400).json({ error: 'Wrong file type submitted. '});
         }
         
